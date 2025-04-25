@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
+#include "AbilitySystem/LiraAbilitySystemComponent.h"
 #include "LiraCharacter.generated.h"
 
 class USpringArmComponent;
@@ -19,7 +20,7 @@ UCLASS(config=Game)
 class ALiraCharacter : public ACharacter
 {
 	GENERATED_BODY()
-
+	
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* CameraBoom;
@@ -27,46 +28,33 @@ class ALiraCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
-	
-	/** MappingContext */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputMappingContext* DefaultMappingContext;
 
-	/** Jump Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* JumpAction;
-
-	/** Move Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* MoveAction;
-
-	/** Look Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* LookAction;
-
+	virtual void Tick(float DeltaSeconds) override;
 public:
 	ALiraCharacter();
-	
-
-protected:
 
 	/** Called for movement input */
-	void Move(const FInputActionValue& Value);
+	void Move(const FVector2D& MovementVector);
 
 	/** Called for looking input */
-	void Look(const FInputActionValue& Value);
-			
+	void Look(const FVector2D& LookAxisVector);
 
-protected:
 
-	virtual void NotifyControllerChanged() override;
-
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	UPROPERTY()
+	ULiraAbilitySystemComponent* LiraAbilitySystemComponent;
+	
+	UPROPERTY()
+	ULiraAttributeSet* LiraAttributeSet;
 
 public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	ULiraAbilitySystemComponent* GetLiraAbilitySystemComponent() const { return LiraAbilitySystemComponent; }
+
+	void ToggleSprint(bool bActive);
+	FActiveGameplayEffectHandle SprintEffectHandle;
 };
 

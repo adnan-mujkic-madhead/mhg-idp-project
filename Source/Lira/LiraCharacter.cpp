@@ -1,20 +1,33 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "LiraCharacter.h"
+
+#include "AbilitySystem/LiraAttributeSet.h"
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Controller.h"
-#include "EnhancedInputComponent.h"
-#include "EnhancedInputSubsystems.h"
-#include "InputActionValue.h"
+#include "Config/LiraDeveloperSettings.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 //////////////////////////////////////////////////////////////////////////
 // ALiraCharacter
+
+void ALiraCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if (UCharacterMovementComponent* MovementComponent = Cast<UCharacterMovementComponent>(GetMovementComponent()))
+	{
+		if (LiraAbilitySystemComponent)
+		{
+			MovementComponent->MaxWalkSpeed = LiraAbilitySystemComponent->GetNumericAttribute(ULiraAttributeSet::GetMovementSpeedAttribute());
+		}
+	}
+}
 
 ALiraCharacter::ALiraCharacter()
 {
@@ -41,7 +54,7 @@ ALiraCharacter::ALiraCharacter()
 
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-	CameraBoom->SetupAttachment(RootComponent);
+	CameraBoom->SetupAttachment(GetMesh());
 	CameraBoom->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
 	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
 
@@ -50,53 +63,12 @@ ALiraCharacter::ALiraCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
-	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+	LiraAbilitySystemComponent = CreateDefaultSubobject<ULiraAbilitySystemComponent>(TEXT("LiraAbilitySystemComponent"));
+	LiraAttributeSet = CreateDefaultSubobject<ULiraAttributeSet>(FName("LiraAttributeSet"));
 }
 
-//////////////////////////////////////////////////////////////////////////
-// Input
-
-void ALiraCharacter::NotifyControllerChanged()
+void ALiraCharacter::Move(const FVector2D& MovementVector)
 {
-	Super::NotifyControllerChanged();
-
-	// Add Input Mapping Context
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
-	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-		{
-			Subsystem->AddMappingContext(DefaultMappingContext, 0);
-		}
-	}
-}
-
-void ALiraCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	// Set up action bindings
-	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
-		
-		// Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
-
-		// Moving
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ALiraCharacter::Move);
-
-		// Looking
-		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ALiraCharacter::Look);
-	}
-	else
-	{
-		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
-	}
-}
-
-void ALiraCharacter::Move(const FInputActionValue& Value)
-{
-	// input is a Vector2D
-	FVector2D MovementVector = Value.Get<FVector2D>();
-
 	if (Controller != nullptr)
 	{
 		// find out which way is forward
@@ -115,15 +87,27 @@ void ALiraCharacter::Move(const FInputActionValue& Value)
 	}
 }
 
-void ALiraCharacter::Look(const FInputActionValue& Value)
+void ALiraCharacter::Look(const FVector2D& LookAxisVector)
 {
-	// input is a Vector2D
-	FVector2D LookAxisVector = Value.Get<FVector2D>();
-
 	if (Controller != nullptr)
 	{
 		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
+	}
+}
+
+void ALiraCharacter::ToggleSprint(bool bActive)
+{
+	if (LiraAbilitySystemComponent)
+	{
+		if (bActive)
+		{
+			SprintEffectHandle = LiraAbilitySystemComponent->BP_ApplyGameplayEffectToSelf(GetDefault<ULiraDeveloperSettings>()->SprintEffect, 1.0f, LiraAbilitySystemComponent->MakeEffectContext());
+		}
+		else
+		{
+			LiraAbilitySystemComponent->RemoveActiveGameplayEffect(SprintEffectHandle);
+		}
 	}
 }
