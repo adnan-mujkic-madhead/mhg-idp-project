@@ -20,14 +20,7 @@ UCLASS(config=Game)
 class ALiraCharacter : public ACharacter
 {
 	GENERATED_BODY()
-	
-	/** Camera boom positioning the camera behind the character */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	USpringArmComponent* CameraBoom;
 
-	/** Follow camera */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	UCameraComponent* FollowCamera;
 
 	virtual void Tick(float DeltaSeconds) override;
 public:
@@ -47,10 +40,7 @@ public:
 	ULiraAttributeSet* LiraAttributeSet;
 
 public:
-	/** Returns CameraBoom subobject **/
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-	/** Returns FollowCamera subobject **/
-	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	ULiraAbilitySystemComponent* GetLiraAbilitySystemComponent() const { return LiraAbilitySystemComponent; }
 
