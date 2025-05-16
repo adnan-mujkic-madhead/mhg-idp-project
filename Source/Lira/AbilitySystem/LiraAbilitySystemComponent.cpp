@@ -4,6 +4,7 @@
 #include "LiraAbilitySystemComponent.h"
 
 #include "LiraAttributeSet.h"
+#include "Lira/LiraCharacter.h"
 
 
 // Sets default values for this component's properties
@@ -21,7 +22,6 @@ void ULiraAbilitySystemComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
 	
 }
 

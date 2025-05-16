@@ -46,13 +46,22 @@ ALiraCharacter::ALiraCharacter()
 	// instead of recompiling to adjust them
 	GetCharacterMovement()->JumpZVelocity = 700.f;
 	GetCharacterMovement()->AirControl = 0.35f;
-	GetCharacterMovement()->MaxWalkSpeed = 500.f;
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
 
 	LiraAbilitySystemComponent = CreateDefaultSubobject<ULiraAbilitySystemComponent>(TEXT("LiraAbilitySystemComponent"));
 	LiraAttributeSet = CreateDefaultSubobject<ULiraAttributeSet>(FName("LiraAttributeSet"));
+}
+
+void ALiraCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (LiraAbilitySystemComponent)
+	{
+		LiraAbilitySystemComponent->BP_ApplyGameplayEffectToSelf(InitialEffect, 0.f, LiraAbilitySystemComponent->MakeEffectContext());
+	}
 }
 
 void ALiraCharacter::Move(const FVector2D& MovementVector)

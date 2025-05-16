@@ -26,6 +26,8 @@ class ALiraCharacter : public ACharacter
 public:
 	ALiraCharacter();
 
+	virtual void BeginPlay() override;
+
 	/** Called for movement input */
 	void Move(const FVector2D& MovementVector);
 
@@ -46,5 +48,9 @@ public:
 
 	void ToggleSprint(bool bActive);
 	FActiveGameplayEffectHandle SprintEffectHandle;
+
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<UGameplayEffect> InitialEffect;
 };
 

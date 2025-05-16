@@ -13,5 +13,11 @@ UCLASS()
 class LIRA_API ALiraAIController : public AAIController
 {
 	GENERATED_BODY()
-	
+
+public:
+
+	virtual void BeginPlay() override;
+
+protected:
+
 };
