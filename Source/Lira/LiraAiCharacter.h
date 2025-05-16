@@ -7,6 +7,7 @@
 #include "LiraAiCharacter.generated.h"
 
 
+class ASplinePathActor;
 
 UCLASS()
 class LIRA_API ALiraAiCharacter : public ALiraCharacter
@@ -17,9 +18,14 @@ public:
 	// Sets default values for this character's properties
 	ALiraAiCharacter();
 
+	ASplinePathActor* GetSplinePathActor() { return SplinePathRef; }
+
 	FSoftObjectPath GetRoamingBehaviorTree() { return RoamingBehaviorTree; }
 
 protected:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Behavior", meta=(MetaClass="BehaviorTree"))
+	ASplinePathActor* SplinePathRef;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Behavior", meta=(MetaClass="BehaviorTree"))
 	FSoftObjectPath RoamingBehaviorTree;
