@@ -4,7 +4,7 @@
 #include "PlayerLiraCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
-
+#include "Kismet/KismetMaterialLibrary.h"
 
 
 APlayerLiraCharacter::APlayerLiraCharacter() {
@@ -20,4 +20,14 @@ APlayerLiraCharacter::APlayerLiraCharacter() {
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+}
+
+void APlayerLiraCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if (MinimapMpc)
+	{
+		UKismetMaterialLibrary::SetVectorParameterValue(GetWorld(), MinimapMpc, FName("PlayerPos"), FLinearColor(GetActorLocation()));
+	}
 }

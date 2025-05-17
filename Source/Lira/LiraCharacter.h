@@ -22,7 +22,6 @@ class ALiraCharacter : public ACharacter
 	GENERATED_BODY()
 
 
-	virtual void Tick(float DeltaSeconds) override;
 public:
 	ALiraCharacter();
 
@@ -52,5 +51,8 @@ public:
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UGameplayEffect> InitialEffect;
+
+	virtual void Tick(float DeltaSeconds) override;
+
 };
 

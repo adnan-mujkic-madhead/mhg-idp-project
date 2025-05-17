@@ -21,6 +21,8 @@ public:
 	FBlackboardKeySelector NextLocationKey;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
 	FBlackboardKeySelector NextLocationIndexKey;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
+	FBlackboardKeySelector ForwardCountingIndexKey;
 
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 };

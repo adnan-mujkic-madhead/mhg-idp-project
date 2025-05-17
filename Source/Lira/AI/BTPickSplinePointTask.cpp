@@ -28,6 +28,7 @@ EBTNodeResult::Type UBTPickSplinePointTask::ExecuteTask(UBehaviorTreeComponent& 
 	UBlackboardComponent* BlackboardComponent = OwnerComp.GetBlackboardComponent();
 	if (!BlackboardComponent) return EBTNodeResult::Type::Failed;
 
+	bool IsForwardCounting = BlackboardComponent->GetValueAsBool(ForwardCountingIndexKey.SelectedKeyName);
 	
 	int32 CurrentSplineIndex = BlackboardComponent->GetValueAsInt(NextLocationIndexKey.SelectedKeyName);
 	FVector Loc = SplinePathActor->GetSplineComponent()->GetLocationAtSplinePoint(CurrentSplineIndex, ESplineCoordinateSpace::World);
@@ -35,7 +36,24 @@ EBTNodeResult::Type UBTPickSplinePointTask::ExecuteTask(UBehaviorTreeComponent& 
 	//DrawDebugCapsule(GetWorld(), Loc, 50.f, 40.f, FQuat::Identity, FColor::White, false, 10.f);
 	
 	int32 NumSplinePoints = SplinePathActor->GetSplineComponent()->GetNumberOfSplinePoints();
-	CurrentSplineIndex = CurrentSplineIndex >= NumSplinePoints - 1? 0 : CurrentSplineIndex + 1;
+	if (IsForwardCounting)
+	{
+		CurrentSplineIndex++;
+		if (CurrentSplineIndex >= NumSplinePoints)
+		{
+			CurrentSplineIndex--;
+			BlackboardComponent->SetValueAsBool(ForwardCountingIndexKey.SelectedKeyName, false);
+		}
+	}
+	else
+	{
+		CurrentSplineIndex--;
+		if (CurrentSplineIndex <= -1)
+		{
+			CurrentSplineIndex++;
+			BlackboardComponent->SetValueAsBool(ForwardCountingIndexKey.SelectedKeyName, true);
+		}
+	}
 	BlackboardComponent->SetValueAsInt(NextLocationIndexKey.SelectedKeyName, CurrentSplineIndex);
 	
 	return Super::ExecuteTask(OwnerComp, NodeMemory);

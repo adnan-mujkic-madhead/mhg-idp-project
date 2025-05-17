@@ -14,8 +14,11 @@ class LIRA_API APlayerLiraCharacter : public ALiraCharacter
 {
 	GENERATED_BODY()
 
+	
+
 public:
 	APlayerLiraCharacter();
+
 
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
@@ -31,4 +34,11 @@ protected:
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UMaterialParameterCollection* MinimapMpc;
+
+	virtual void Tick(float DeltaSeconds) override;
+
+
 };
