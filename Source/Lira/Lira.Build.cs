@@ -6,6 +6,7 @@ public class Lira : ModuleRules
 {
 	public Lira(ReadOnlyTargetRules Target) : base(Target)
 	{
+		PrivateDependencyModuleNames.AddRange(new string[] {  });
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
 		PublicDependencyModuleNames.AddRange(new string[] { 
@@ -19,6 +20,8 @@ public class Lira : ModuleRules
 			"GameplayTags", 
 			"DeveloperSettings",
 			"AIModule",
-			"GameplayTasks"});
+			"GameplayTasks",
+			"GeometryScriptingCore"
+		});
 	}
 }

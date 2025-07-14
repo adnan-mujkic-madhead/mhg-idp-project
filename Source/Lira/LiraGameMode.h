@@ -13,6 +13,8 @@ class ALiraGameMode : public AGameModeBase
 
 public:
 	ALiraGameMode();
+
+	void CatchPlayer(AActor* CatchActor);
 };
 
 

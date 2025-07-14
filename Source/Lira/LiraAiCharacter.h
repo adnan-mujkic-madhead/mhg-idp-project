@@ -21,6 +21,7 @@ public:
 	ASplinePathActor* GetSplinePathActor() { return SplinePathRef; }
 
 	FSoftObjectPath GetRoamingBehaviorTree() { return RoamingBehaviorTree; }
+	FSoftObjectPath GetChasingBehaviorTree() { return ChasingBehaviorTree; }
 
 protected:
 
@@ -29,5 +30,8 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Behavior", meta=(MetaClass="BehaviorTree"))
 	FSoftObjectPath RoamingBehaviorTree;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Behavior", meta=(MetaClass="BehaviorTree"))
+	FSoftObjectPath ChasingBehaviorTree;
 
 };

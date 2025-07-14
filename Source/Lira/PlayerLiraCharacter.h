@@ -19,6 +19,8 @@ class LIRA_API APlayerLiraCharacter : public ALiraCharacter
 public:
 	APlayerLiraCharacter();
 
+	virtual void Crouch(bool bClientSimulation = false) override;
+	virtual void UnCrouch(bool bClientSimulation = false) override;
 
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
@@ -38,7 +40,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UMaterialParameterCollection* MinimapMpc;
 
+	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 
+	UPROPERTY()
+	float CachedCapsuleRadius = 0.f;
 
 };

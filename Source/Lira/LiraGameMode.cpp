@@ -13,3 +13,8 @@ ALiraGameMode::ALiraGameMode()
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
 }
+
+void ALiraGameMode::CatchPlayer(AActor* CatchActor)
+{
+	//END GAME HERE
+}
